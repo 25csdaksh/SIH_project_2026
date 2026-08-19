@@ -14,7 +14,7 @@ import { Crop } from '../models/Crop.js';
 import { Soil } from '../models/Soil.js';
 import { GovernmentScheme } from '../models/GovernmentScheme.js';
 import { MandiRate } from '../models/MandiRate.js';
-import { SmartKrishi } from '../models/SmartKrishi.js';
+import { runSmartKrishiSeed } from './seedSmartKrishi.js';
 
 import { districtsData } from './districts.js';
 import { cropsData } from './crops.js';
@@ -51,12 +51,7 @@ export const runSeed = async () => {
   if (!connected) return;
 
   try {
-    // Drop database to clear old schema indexes
-    logger.info('Dropping existing database collections and indexes...');
-    await mongoose.connection.db.dropDatabase();
-    logger.info('Database dropped cleanly.');
-
-    // 1. Seed Districts
+    // Safe collections seed without dropping entire database
     logger.info('Seeding District records...');
     await District.deleteMany({});
     const insertedDistricts = await District.insertMany(districtsData);
@@ -187,122 +182,8 @@ export const runSeed = async () => {
     const insertedMandi = await MandiRate.insertMany(sampleMandiRates);
     logger.info(`Seeded ${insertedMandi.length} sample Mandi Rate records.`);
 
-    // 6. Seed Smart Krishi JSON Data
-    logger.info('Clearing old SmartKrishi records & reading smartKrishiData.json...');
-    await SmartKrishi.deleteMany({});
-
-    const jsonPath = path.resolve('src/seed/smartKrishiData.json');
-    if (fs.existsSync(jsonPath)) {
-      const rawJson = fs.readFileSync(jsonPath, 'utf8');
-      const parsedData = JSON.parse(rawJson);
-
-      let smartKrishiItems = [];
-
-      if (Array.isArray(parsedData)) {
-        smartKrishiItems = parsedData.map((item) => {
-          const dId = districtMapByCode[item.districtCode] || insertedDistricts[0]._id;
-          const cId = cropMapByCode[item.cropCode] || insertedCrops[0]._id;
-
-          return {
-            district: dId,
-            crop: cId,
-            season: item.season,
-            soilInformation: item.soilInformation,
-            phLevel: item.phLevel,
-            npkLevel: item.npkLevel,
-            weatherInformation: item.weatherInformation,
-            fertilizerSuggestion: item.fertilizerSuggestion,
-            waterTiming: item.waterTiming,
-            possibleDiseases: item.possibleDiseases,
-            precautions: item.precautions
-          };
-        });
-      } else if (parsedData.districts && Array.isArray(parsedData.districts)) {
-        // Safe helper function for multilingual District Name
-        const getDistrictNameStr = (distDoc) => {
-          if (!distDoc || !distDoc.districtName) return '';
-          if (typeof distDoc.districtName === 'string') return distDoc.districtName.toLowerCase();
-          return (distDoc.districtName.en || distDoc.districtName.gu || distDoc.districtName.hi || '').toLowerCase();
-        };
-
-        // Safe helper function for multilingual Crop Name
-        const getCropNameStr = (cropDoc) => {
-          if (!cropDoc || !cropDoc.name) return '';
-          if (typeof cropDoc.name === 'string') return cropDoc.name.toLowerCase();
-          return (cropDoc.name.en || cropDoc.name.gu || cropDoc.name.hi || '').toLowerCase();
-        };
-
-        // Flatten nested format: districts -> crops -> seasons
-        parsedData.districts.forEach((d) => {
-          const dCode = d.code ? d.code.replace('GJ-', '').toUpperCase() : '';
-          const matchedDistrictId = insertedDistricts.find((dist) => {
-            const dNameStr = getDistrictNameStr(dist);
-            return dist.districtCode === dCode || (dNameStr && d.name && dNameStr.includes(d.name.toLowerCase()));
-          })?._id || insertedDistricts[0]._id;
-
-          (d.crops || []).forEach((c) => {
-            const matchedCropId = insertedCrops.find((cr) => {
-              const crNameStr = getCropNameStr(cr);
-              return cr.cropCode === c.id || (crNameStr && c.name && crNameStr.includes(c.name.toLowerCase()));
-            })?._id || insertedCrops[0]._id;
-
-            (c.seasons || []).forEach((s) => {
-              smartKrishiItems.push({
-                district: matchedDistrictId,
-                crop: matchedCropId,
-                season: s.name.toLowerCase(),
-                soilInformation: {
-                  en: s.soil?.types?.join(', ') || 'Well drained soil',
-                  gu: `${c.gujaratiName || c.name} માટે અનુકૂળ જમીન`,
-                  hi: `${c.hindiName || c.name} के लिए उपयुक्त मिट्टी`
-                },
-                phLevel: parseFloat(s.soil?.phRange) || 7.0,
-                npkLevel: {
-                  nitrogen: s.soil?.nitrogen?.recommendedRange || 'Medium',
-                  phosphorus: s.soil?.phosphorus?.recommendedRange || 'Medium',
-                  potassium: s.soil?.potassium?.recommendedRange || 'Medium'
-                },
-                weatherInformation: {
-                  en: `Temp: ${s.weatherRequirements?.temperature || '20-30°C'}, Rainfall: ${s.weatherRequirements?.rainfall || '500mm'}`,
-                  gu: `તાપમાન: ${s.weatherRequirements?.temperature || '૨૦-૩૦°C'}, વરસાદ: ${s.weatherRequirements?.rainfall || '૫૦૦મીમી'}`,
-                  hi: `तापमान: ${s.weatherRequirements?.temperature || '20-30°C'}, बारिश: ${s.weatherRequirements?.rainfall || '500मिमी'}`
-                },
-                fertilizerSuggestion: {
-                  en: s.fertilizer?.recommendation || 'Apply balanced NPK as per soil test.',
-                  gu: `${s.fertilizer?.recommendation || 'જમીન ચકાસણી મુજબ સમતોલ NPK આપવું.'}`,
-                  hi: `${s.fertilizer?.recommendation || 'मिट्टी परीक्षण के अनुसार संतुलित एनपीके दें।'}`
-                },
-                waterTiming: {
-                  en: s.irrigation?.timing || s.irrigation?.frequency || 'Irrigate at critical stages.',
-                  gu: `${s.irrigation?.timing || 'મહત્વના તબક્કે પિયત આપવું.'}`,
-                  hi: `${s.irrigation?.timing || 'महत्वपूर्ण चरणों पर सिंचाई करें।'}`
-                },
-                possibleDiseases: (s.diseases || []).map((dis) => ({
-                  en: `${dis.name}: ${dis.symptoms || ''}`,
-                  gu: `${dis.gujaratiName || dis.name}: ${dis.prevention || ''}`,
-                  hi: `${dis.name}: ${dis.prevention || ''}`
-                })),
-                precautions: (s.precautions || []).map((p) => ({
-                  en: typeof p === 'string' ? p : p.en || p.name || 'Follow IPM guidelines',
-                  gu: typeof p === 'string' ? p : p.gu || 'યોગ્ય કાળજી લેવી',
-                  hi: typeof p === 'string' ? p : p.hi || 'उचित सावधानी बरतें'
-                }))
-              });
-            });
-          });
-        });
-      }
-
-      if (smartKrishiItems.length > 0) {
-        const insertedSmartKrishi = await SmartKrishi.insertMany(smartKrishiItems);
-        logger.info(`Seeded ${insertedSmartKrishi.length} Smart Krishi JSON advisory profiles into Database.`);
-      }
-    } else {
-      logger.warn('smartKrishiData.json not found, skipping JSON seed step.');
-    }
-
-    logger.info('Database seeding completed successfully!');
-    process.exit(0);
+    // 6. Delegate to safe Smart Krishi seed logic
+    await runSmartKrishiSeed();
   } catch (error) {
     logger.error(`Database Seeding Failed: ${error.message}`);
     process.exit(1);

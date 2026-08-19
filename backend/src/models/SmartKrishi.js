@@ -100,7 +100,7 @@ const smartKrishiSchema = new mongoose.Schema(
         riskConditions: { type: String }
       }
     ],
-    precautions: [{ type: String }],
+    precautions: [multilingualTextSchema],
     sources: [
       {
         name: { type: String },
@@ -114,7 +114,6 @@ const smartKrishiSchema = new mongoose.Schema(
       description: { type: String },
       dataSourceMethodology: { type: String }
     },
-    // Backwards compatibility multilingual fields
     soilInformation: multilingualTextSchema,
     weatherInformation: multilingualTextSchema,
     fertilizerSuggestion: multilingualTextSchema,

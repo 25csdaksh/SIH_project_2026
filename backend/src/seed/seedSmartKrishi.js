@@ -38,7 +38,7 @@ export const runSmartKrishiSeed = async () => {
     process.exit(1);
   }
 
-  console.log('\nTop-level keys in JSON:', Object.keys(parsedData));
+  console.log('Top-level keys in JSON:', Object.keys(parsedData));
 
   let districtsInJson = [];
   if (Array.isArray(parsedData)) {
@@ -60,7 +60,7 @@ export const runSmartKrishiSeed = async () => {
     });
   });
 
-  console.log(`\nDistricts detected: ${districtsCount}`);
+  console.log(`Districts detected: ${districtsCount}`);
   console.log(`Distinct crops detected: ${distinctCropsSet.size}`);
   console.log(`District-crop combinations: ${districtCropCombinations}`);
   console.log(`District-crop-season records: ${districtCropSeasonRecords}\n`);
@@ -124,8 +124,9 @@ export const runSmartKrishiSeed = async () => {
   let duplicateCount = 0;
 
   for (const d of districtsInJson) {
-    const dCode = d.code ? d.code.replace('GJ-', '').toUpperCase() : (d.districtCode || '');
-    let districtDoc = dbDistricts.find((dist) => dist.districtCode === dCode);
+    const rawDistrictCode = d.code || d.districtCode || '';
+    const dCodeShort = rawDistrictCode.replace('GJ-', '').toUpperCase();
+    let districtDoc = dbDistricts.find((dist) => dist.districtCode === dCodeShort || dist.districtCode === rawDistrictCode);
 
     if (!districtDoc && d.name) {
       districtDoc = dbDistricts.find((dist) => {
@@ -139,8 +140,8 @@ export const runSmartKrishiSeed = async () => {
     }
 
     for (const c of d.crops || []) {
-      const cId = c.id || c.cropCode;
-      let cropDoc = dbCrops.find((cr) => cr.cropCode === cId);
+      const rawCropId = c.id || c.cropCode || c.cropId || '';
+      let cropDoc = dbCrops.find((cr) => cr.cropCode === rawCropId);
 
       if (!cropDoc && c.name) {
         cropDoc = dbCrops.find((cr) => {
@@ -156,6 +157,41 @@ export const runSmartKrishiSeed = async () => {
       for (const s of c.seasons || []) {
         const seasonName = (s.name || s.season || 'Kharif').toLowerCase();
 
+        // Safely format precautions array as multilingual objects
+        const formattedPrecautions = (s.precautions || []).map((p) => {
+          if (typeof p === 'string') {
+            return { en: p, gu: p, hi: p };
+          }
+          if (typeof p === 'object' && p !== null) {
+            return {
+              en: p.en || p.name || p.title || '',
+              gu: p.gu || p.name || p.title || '',
+              hi: p.hi || p.name || p.title || ''
+            };
+          }
+          return { en: String(p), gu: String(p), hi: String(p) };
+        });
+
+        // Safely format diseases array
+        const formattedDiseases = (s.diseases || []).map((dis) => ({
+          name: dis.name || '',
+          gujaratiName: dis.gujaratiName || '',
+          symptoms: dis.symptoms || '',
+          prevention: dis.prevention || '',
+          management: dis.management || '',
+          riskConditions: dis.riskConditions || ''
+        }));
+
+        // Safely format pests array
+        const formattedPests = (s.pests || []).map((pst) => ({
+          name: pst.name || '',
+          gujaratiName: pst.gujaratiName || '',
+          symptoms: pst.symptoms || '',
+          prevention: pst.prevention || '',
+          management: pst.management || '',
+          riskConditions: pst.riskConditions || ''
+        }));
+
         const query = {
           district: districtDoc._id,
           crop: cropDoc._id,
@@ -165,14 +201,14 @@ export const runSmartKrishiSeed = async () => {
         const updateDoc = {
           $set: {
             district: districtDoc._id,
-            districtCode: d.code || districtDoc.districtCode,
+            districtCode: rawDistrictCode || districtDoc.districtCode,
             districtName: {
               en: d.name || districtDoc.districtName.en,
               gu: d.gujaratiName || districtDoc.districtName.gu,
               hi: d.hindiName || districtDoc.districtName.hi
             },
             crop: cropDoc._id,
-            cropId: c.id || cropDoc.cropCode,
+            cropId: rawCropId || cropDoc.cropCode,
             cropName: {
               en: c.name || cropDoc.name.en,
               gu: c.gujaratiName || cropDoc.name.gu,
@@ -189,9 +225,9 @@ export const runSmartKrishiSeed = async () => {
             weatherRequirements: s.weatherRequirements || {},
             fertilizer: s.fertilizer || {},
             irrigation: s.irrigation || {},
-            diseases: s.diseases || [],
-            pests: s.pests || [],
-            precautions: s.precautions || [],
+            diseases: formattedDiseases,
+            pests: formattedPests,
+            precautions: formattedPrecautions,
             sources: s.sources || [],
             metadata: {
               version: parsedData.version || '1.0',
@@ -220,7 +256,7 @@ export const runSmartKrishiSeed = async () => {
               gu: s.irrigation?.timing || 'મહત્વના તબક્કે પિયત આપવું.',
               hi: s.irrigation?.timing || 'महत्वपूर्ण चरणों पर सिंचाई करें।'
             },
-            possibleDiseases: (s.diseases || []).map((dis) => ({
+            possibleDiseases: formattedDiseases.map((dis) => ({
               en: `${dis.name}: ${dis.symptoms || ''}`,
               gu: `${dis.gujaratiName || dis.name}: ${dis.prevention || ''}`,
               hi: `${dis.name}: ${dis.prevention || ''}`
