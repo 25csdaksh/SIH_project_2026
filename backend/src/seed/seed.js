@@ -170,29 +170,93 @@ export const runSeed = async () => {
     const jsonPath = path.resolve('src/seed/smartKrishiData.json');
     if (fs.existsSync(jsonPath)) {
       const rawJson = fs.readFileSync(jsonPath, 'utf8');
-      const smartKrishiItems = JSON.parse(rawJson);
+      const parsedData = JSON.parse(rawJson);
 
-      const smartKrishiDocs = smartKrishiItems.map((item) => {
-        const dId = districtMapByCode[item.districtCode] || insertedDistricts[0]._id;
-        const cId = cropMapByCode[item.cropCode] || insertedCrops[0]._id;
+      let smartKrishiItems = [];
 
-        return {
-          district: dId,
-          crop: cId,
-          season: item.season,
-          soilInformation: item.soilInformation,
-          phLevel: item.phLevel,
-          npkLevel: item.npkLevel,
-          weatherInformation: item.weatherInformation,
-          fertilizerSuggestion: item.fertilizerSuggestion,
-          waterTiming: item.waterTiming,
-          possibleDiseases: item.possibleDiseases,
-          precautions: item.precautions
-        };
-      });
+      if (Array.isArray(parsedData)) {
+        smartKrishiItems = parsedData.map((item) => {
+          const dId = districtMapByCode[item.districtCode] || insertedDistricts[0]._id;
+          const cId = cropMapByCode[item.cropCode] || insertedCrops[0]._id;
 
-      const insertedSmartKrishi = await SmartKrishi.insertMany(smartKrishiDocs);
-      logger.info(`Seeded ${insertedSmartKrishi.length} Smart Krishi JSON advisory profiles into MongoDB Atlas.`);
+          return {
+            district: dId,
+            crop: cId,
+            season: item.season,
+            soilInformation: item.soilInformation,
+            phLevel: item.phLevel,
+            npkLevel: item.npkLevel,
+            weatherInformation: item.weatherInformation,
+            fertilizerSuggestion: item.fertilizerSuggestion,
+            waterTiming: item.waterTiming,
+            possibleDiseases: item.possibleDiseases,
+            precautions: item.precautions
+          };
+        });
+      } else if (parsedData.districts && Array.isArray(parsedData.districts)) {
+        // Flatten nested format: districts -> crops -> seasons
+        parsedData.districts.forEach((d) => {
+          const dCode = d.code ? d.code.replace('GJ-', '').toUpperCase() : '';
+          const matchedDistrictId = insertedDistricts.find(
+            (dist) => dist.districtCode === dCode || dist.districtName.toLowerCase().includes(d.name.toLowerCase())
+          )?._id || insertedDistricts[0]._id;
+
+          (d.crops || []).forEach((c) => {
+            const matchedCropId = insertedCrops.find(
+              (cr) => cr.cropCode === c.id || cr.name.toLowerCase() === c.name.toLowerCase()
+            )?._id || insertedCrops[0]._id;
+
+            (c.seasons || []).forEach((s) => {
+              smartKrishiItems.push({
+                district: matchedDistrictId,
+                crop: matchedCropId,
+                season: s.name.toLowerCase(),
+                soilInformation: {
+                  en: s.soil?.types?.join(', ') || 'Well drained soil',
+                  gu: `${c.gujaratiName || c.name} માટે અનુકૂળ જમીન`,
+                  hi: `${c.hindiName || c.name} के लिए उपयुक्त मिट्टी`
+                },
+                phLevel: parseFloat(s.soil?.phRange) || 7.0,
+                npkLevel: {
+                  nitrogen: s.soil?.nitrogen?.recommendedRange || 'Medium',
+                  phosphorus: s.soil?.phosphorus?.recommendedRange || 'Medium',
+                  potassium: s.soil?.potassium?.recommendedRange || 'Medium'
+                },
+                weatherInformation: {
+                  en: `Temp: ${s.weatherRequirements?.temperature || '20-30°C'}, Rainfall: ${s.weatherRequirements?.rainfall || '500mm'}`,
+                  gu: `તાપમાન: ${s.weatherRequirements?.temperature || '૨૦-૩૦°C'}, વરસાદ: ${s.weatherRequirements?.rainfall || '૫૦૦મીમી'}`,
+                  hi: `तापमान: ${s.weatherRequirements?.temperature || '20-30°C'}, बारिश: ${s.weatherRequirements?.rainfall || '500मिमी'}`
+                },
+                fertilizerSuggestion: {
+                  en: s.fertilizer?.recommendation || 'Apply balanced NPK as per soil test.',
+                  gu: `${s.fertilizer?.recommendation || 'જમીન ચકાસણી મુજબ સમતોલ NPK આપવું.'}`,
+                  hi: `${s.fertilizer?.recommendation || 'मिट्टी परीक्षण के अनुसार संतुलित एनपीके दें।'}`
+                },
+                waterTiming: {
+                  en: s.irrigation?.timing || s.irrigation?.frequency || 'Irrigate at critical stages.',
+                  gu: `${s.irrigation?.timing || 'મહત્વના તબક્કે પિયત આપવું.'}`,
+                  hi: `${s.irrigation?.timing || 'महत्वपूर्ण चरणों पर सिंचाई करें।'}`
+                },
+                possibleDiseases: (s.diseases || []).map((dis) => ({
+                  en: `${dis.name}: ${dis.symptoms || ''}`,
+                  gu: `${dis.gujaratiName || dis.name}: ${dis.prevention || ''}`,
+                  hi: `${dis.name}: ${dis.prevention || ''}`
+                })),
+                precautions: (s.precautions || []).map((p) => ({
+                  en: typeof p === 'string' ? p : p.en || p.name || 'Follow IPM guidelines',
+                  gu: typeof p === 'string' ? p : p.gu || 'યોગ્ય કાળજી લેવી',
+                  hi: typeof p === 'string' ? p : p.hi || 'उचित सावधानी बरतें'
+                }))
+              });
+            });
+          });
+        });
+      }
+
+      if (smartKrishiItems.length > 0) {
+        const insertedSmartKrishi = await SmartKrishi.insertMany(smartKrishiItems);
+        logger.info(`Seeded ${insertedSmartKrishi.length} Smart Krishi JSON advisory profiles into MongoDB Atlas.`);
+      }
     } else {
       logger.warn('smartKrishiData.json not found, skipping JSON seed step.');
     }

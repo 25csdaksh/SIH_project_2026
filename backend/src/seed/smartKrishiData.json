@@ -1,192 +1,263 @@
-[
-  {
-    "districtCode": "AND",
-    "cropCode": "cotton",
-    "season": "kharif",
-    "soilInformation": {
-      "en": "Deep Goradu Fertile Loam Soil",
-      "gu": "ઉંડી રસાળ ગોરાડુ જમીન",
-      "hi": "गहरी उपजाऊ गोराडू मिट्टी"
-    },
-    "phLevel": 7.2,
-    "npkLevel": {
-      "nitrogen": "High",
-      "phosphorus": "Medium",
-      "potassium": "High"
-    },
-    "weatherInformation": {
-      "en": "Monsoon / Moderate Humidity suitable for Cotton",
-      "gu": "ચોમાસુ / કપાસ માટે અનુકૂળ હવામાન",
-      "hi": "मानसून / कपास के लिए अनुकूल मौसम"
-    },
-    "fertilizerSuggestion": {
-      "en": "Apply 120 kg N, 60 kg P2O5, and 60 kg K2O per hectare. Split Nitrogen into 3 doses: Basal, 30 DAP, and 60 DAP.",
-      "gu": "હેક્ટર દીઠ ૧૨૦ કિગ્રા નાઇટ્રોજન, ૬૦ કિગ્રા ફોસ્ફરસ અને ૬૦ કિગ્રા પોટાશ આપવો. નાઇટ્રોજન ૩ હપ્તામાં આપવો.",
-      "hi": "प्रति हेक्टेयर 120 किग्रा एन, 60 किग्रा पी और 60 किग्रा के दें। एन को 3 खुराकों में विभाजित करें।"
-    },
-    "waterTiming": {
-      "en": "Irrigate at 15-20 days interval during vegetative growth. Avoid waterlogging during flowering and boll development.",
-      "gu": "વૃદ્ધિના તબક્કે ૧૫-૨૦ દિવસે પિયત આપવું. ફૂલ અને ઝીંડવા વખતે ખેતરમાં પાણી ભરાઈ ન રહે તેનું ધ્યાન રાખવું.",
-      "hi": "वानस्पतिक वृद्धि के दौरान 15-20 दिनों के अंतराल पर सिंचाई करें।"
-    },
-    "possibleDiseases": [
-      {
-        "en": "Cotton Pink Bollworm & Sucking Pests (Aphids / Whitefly)",
-        "gu": "કપાસની ગુલાબી ઈયળ અને મોલો-મશી",
-        "hi": "कपास की गुलाबी सूंडी और माहू/सफेद मक्खी"
-      },
-      {
-        "en": "Root Rot due to water stagnation",
-        "gu": "પાણી ભરાઈ રહેવાથી મૂળનો સડો",
-        "hi": "जलभराव के कारण जड़ सड़न"
-      }
-    ],
-    "precautions": [
-      {
-        "en": "Install 5 pheromone traps per acre for early bollworm detection.",
-        "gu": "એકર દીઠ ૫ ફેરોમોન ટ્રેપ ગોઠવો.",
-        "hi": "प्रति एकड़ 5 फेरोमोन ट्रैप लगाएं।"
-      },
-      {
-        "en": "Conduct seed treatment with Trichoderma viride before sowing.",
-        "gu": "વાવણી પહેલા બિયારણને ટ્રાઇકોડર્મા વાયરાઇડનો પટ આપવો.",
-        "hi": "बुआई से पहले ट्राइकोडर्मा विरिडे से बीज उपचार करें।"
-      }
+{
+  "version": "1.0",
+  "state": "Gujarat",
+  "lastUpdated": "2026-08-19",
+  "meta": {
+    "description": "Static District -> Crop -> Season agricultural reference dataset for the KrishiSeva Smart Krishi feature.",
+    "dataSourceMethodology": "District-to-crop assignments reflect broadly documented regional agricultural patterns for Gujarat's five agro-climatic regions (Kachchh, North Gujarat, Central Gujarat, Saurashtra, South Gujarat).",
+    "sources": [
+      { "name": "Open Government Data (OGD) Platform India", "url": "https://www.data.gov.in/" },
+      { "name": "Soil Health Card Scheme", "url": "https://soilhealth.dac.gov.in/" },
+      { "name": "India Meteorological Department (IMD)", "url": "https://mausam.imd.gov.in/" },
+      { "name": "ICAR", "url": "https://icar.gov.in/" },
+      { "name": "Gujarat Agriculture Department", "url": "https://agri.gujarat.gov.in/" }
     ]
   },
-  {
-    "districtCode": "AND",
-    "cropCode": "paddy",
-    "season": "kharif",
-    "soilInformation": {
-      "en": "Alluvial Sandy Loam & Clay Loam",
-      "gu": "કાંપની ગોરાડુ અને ચીકણી જમીન",
-      "hi": "जलोढ़ दोमट और चिकनी मिट्टी"
+  "regions": [
+    "North Gujarat",
+    "Central Gujarat",
+    "South Gujarat",
+    "Saurashtra",
+    "Kachchh"
+  ],
+  "districts": [
+    {
+      "code": "GJ-01",
+      "name": "Kutch (Kachchh)",
+      "gujaratiName": "કચ્છ",
+      "hindiName": "कच्छ",
+      "region": "Kachchh",
+      "crops": [
+        {
+          "id": "cotton",
+          "name": "Cotton",
+          "gujaratiName": "કપાસ",
+          "hindiName": "कपास",
+          "category": "Fiber",
+          "seasons": [
+            {
+              "name": "Kharif",
+              "soil": {
+                "types": ["Black cotton soil (regur)", "Medium to deep soil"],
+                "phRange": "6.5 - 8.0",
+                "nitrogen": { "recommendedRange": "Medium to High" },
+                "phosphorus": { "recommendedRange": "Medium" },
+                "potassium": { "recommendedRange": "Medium" }
+              },
+              "weatherRequirements": {
+                "temperature": "21°C - 35°C",
+                "rainfall": "600 - 1000 mm",
+                "humidity": "Moderate"
+              },
+              "fertilizer": {
+                "recommendation": "Balanced NPK with split Nitrogen application through the season",
+                "applicationTiming": ["Basal dose at sowing", "Split Nitrogen doses at squaring and flowering"]
+              },
+              "irrigation": {
+                "requirement": "Medium to High depending on rainfall",
+                "timing": "Based on soil moisture, rainfall and crop growth stage. Critical irrigation needed at flowering and boll development.",
+                "frequency": "Supplemental irrigation at 15-20 day intervals in dry spells",
+                "criticalStages": ["Squaring", "Flowering", "Boll development"]
+              },
+              "diseases": [
+                {
+                  "name": "Cotton Leaf Curl Virus",
+                  "gujaratiName": "પાન વળવાનો રોગ",
+                  "symptoms": "Upward/downward curling of leaves, vein thickening",
+                  "prevention": "Use tolerant varieties, control whitefly vector"
+                }
+              ],
+              "pests": [
+                {
+                  "name": "Pink Bollworm",
+                  "gujaratiName": "ગુલાબી ઈયળ",
+                  "symptoms": "Rosette flowers, damaged bolls with holes",
+                  "prevention": "Pheromone traps, timely sowing"
+                }
+              ],
+              "precautions": [
+                "Use certified BG-II seed",
+                "Monitor for pink bollworm with pheromone traps",
+                "Destroy crop residue after harvest"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "castor",
+          "name": "Castor",
+          "gujaratiName": "એરંડા",
+          "hindiName": "अरंडी",
+          "category": "Oilseed",
+          "seasons": [
+            {
+              "name": "Kharif",
+              "soil": {
+                "types": ["Medium black soil", "Sandy loam"],
+                "phRange": "6.0 - 7.5",
+                "nitrogen": { "recommendedRange": "Medium" },
+                "phosphorus": { "recommendedRange": "Low to Medium" },
+                "potassium": { "recommendedRange": "Medium" }
+              },
+              "weatherRequirements": {
+                "temperature": "20°C - 30°C",
+                "rainfall": "500 - 700 mm",
+                "humidity": "Moderate"
+              },
+              "fertilizer": {
+                "recommendation": "Balanced NPK with split Nitrogen application",
+                "applicationTiming": ["Basal dose at sowing", "Top dressing at 30-40 days"]
+              },
+              "irrigation": {
+                "requirement": "Medium; responds well to supplemental irrigation",
+                "timing": "Irrigation is beneficial at flowering/spike development stages.",
+                "frequency": "Supplemental irrigation at 15-20 day intervals",
+                "criticalStages": ["Spike initiation", "Flowering", "Capsule development"]
+              },
+              "diseases": [
+                {
+                  "name": "Grey Mold (Botrytis)",
+                  "gujaratiName": "ગ્રે મોલ્ડ",
+                  "symptoms": "Grey fungal growth on spikes and capsules",
+                  "prevention": "Avoid dense planting, ensure good aeration"
+                }
+              ],
+              "pests": [
+                {
+                  "name": "Semilooper",
+                  "gujaratiName": "સેમીલૂપર ઈયળ",
+                  "symptoms": "Defoliation, damaged leaves",
+                  "prevention": "Monitor early infestation"
+                }
+              ],
+              "precautions": [
+                "Avoid waterlogged fields",
+                "Monitor spikes for grey mold during humid weather",
+                "Practice crop rotation to manage wilt"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "cumin",
+          "name": "Cumin (Jeera)",
+          "gujaratiName": "જીરું",
+          "hindiName": "जीरा",
+          "category": "Spice",
+          "seasons": [
+            {
+              "name": "Rabi",
+              "soil": {
+                "types": ["Sandy loam", "Light well-drained soil"],
+                "phRange": "7.0 - 8.5",
+                "nitrogen": { "recommendedRange": "Low to Medium" },
+                "phosphorus": { "recommendedRange": "Low to Medium" },
+                "potassium": { "recommendedRange": "Low to Medium" }
+              },
+              "weatherRequirements": {
+                "temperature": "15°C - 25°C",
+                "rainfall": "Low; largely irrigated crop",
+                "humidity": "Low"
+              },
+              "fertilizer": {
+                "recommendation": "Balanced NPK with modest Nitrogen",
+                "applicationTiming": ["Basal dose at sowing", "Top dressing at 25-30 days"]
+              },
+              "irrigation": {
+                "requirement": "Low to Medium; light frequent irrigation preferred",
+                "timing": "Light irrigation is preferred; avoid over-irrigation.",
+                "frequency": "Light irrigation every 10-15 days",
+                "criticalStages": ["Germination", "Flowering", "Seed formation"]
+              },
+              "diseases": [
+                {
+                  "name": "Cumin Blight (Alternaria)",
+                  "gujaratiName": "જીરું બ્લાઇટ",
+                  "symptoms": "Blighting of foliage, browning, and drying of plants",
+                  "prevention": "Avoid overhead irrigation, spray Mancozeb"
+                }
+              ],
+              "pests": [
+                {
+                  "name": "Aphids",
+                  "gujaratiName": "મોલો",
+                  "symptoms": "Curling of leaves, stunted growth",
+                  "prevention": "Monitor early, avoid excess Nitrogen"
+                }
+              ],
+              "precautions": [
+                "Avoid sowing in poorly drained fields",
+                "Avoid overhead irrigation near flowering",
+                "Monitor closely for blight during foggy spells"
+              ]
+            }
+          ]
+        }
+      ]
     },
-    "phLevel": 7.4,
-    "npkLevel": {
-      "nitrogen": "Medium",
-      "phosphorus": "Medium",
-      "potassium": "High"
-    },
-    "weatherInformation": {
-      "en": "High Rainfall & High Humidity",
-      "gu": "વધારે વરસાદ અને વધુ ભેજનું પ્રમાણ",
-      "hi": "अधिक वर्षा और उच्च आर्द्रता"
-    },
-    "fertilizerSuggestion": {
-      "en": "Apply 100 kg N, 50 kg P2O5, and 50 kg K2O per hectare. Apply Zinc Sulfate @ 25 kg/ha if deficiency occurs.",
-      "gu": "હેક્ટર દીઠ ૧૦૦ કિગ્રા નાઇટ્રોજન, ૫૦ કિગ્રા ફોસ્ફરસ અને ૫૦ કિગ્રા પોટાશ આપવો. ઝીંક સલ્ફેટ ૨૫ કિગ્રા/હેક્ટર આપવું.",
-      "hi": "प्रति हेक्टेयर 100 किग्रा एन, 50 किग्रा पी और 50 किग्रा के दें। जस्ता सल्फेट 25 किग्रा/हेक्टेयर दें।"
-    },
-    "waterTiming": {
-      "en": "Maintain 2-5 cm standing water level during tillering and panicle initiation stages.",
-      "gu": "ફુટ અને અંબી નીકળતી વખતે ૨ થી ૫ સેમી પાણી ભરેલું રાખવું.",
-      "hi": "कल्ले निकलने और बालियां बनते समय 2-5 सेमी खड़ा पानी बनाए रखें।"
-    },
-    "possibleDiseases": [
-      {
-        "en": "Rice Blast (Pyricularia oryzae) & Stem Borer",
-        "gu": "ડાંગરનો ગેરુ/બ્લાસ્ટ રોગ અને સાંઠા કોરી ખાનાર ઈયળ",
-        "hi": "धान का ब्लास्ट रोग और तना छेदक"
-      }
-    ],
-    "precautions": [
-      {
-        "en": "Avoid excessive Nitrogen fertilizer to prevent blast outbreak.",
-        "gu": "બ્લાસ્ટ રોગ અટકાવવા વધુ પડતું નાઇટ્રોજન ખાતર ન આપવું.",
-        "hi": "ब्लास्ट रोग को रोकने के लिए अत्यधिक नाइट्रोजन उर्वरक से बचें।"
-      }
-    ]
-  },
-  {
-    "districtCode": "RAJ",
-    "cropCode": "groundnut",
-    "season": "kharif",
-    "soilInformation": {
-      "en": "Medium Black Cotton Soil & Calcareous Loam",
-      "gu": "મધ્યમ કાળી અને ચુનાયુક્ત જમીન",
-      "hi": "मध्यम काली और चूनायुक्त मिट्टी"
-    },
-    "phLevel": 7.8,
-    "npkLevel": {
-      "nitrogen": "Low",
-      "phosphorus": "Medium",
-      "potassium": "High"
-    },
-    "weatherInformation": {
-      "en": "Warm Climate / Intermittent Rainfall",
-      "gu": "હૂંફાળું હવામાન / સમયાંતરે વરસાદ",
-      "hi": "गर्म मौसम / रुक-रुक कर बारिश"
-    },
-    "fertilizerSuggestion": {
-      "en": "Apply 25 kg N, 50 kg P2O5, and 500 kg Gypsum per hectare at flowering stage.",
-      "gu": "હેક્ટર દીઠ ૨૫ કિગ્રા નાઇટ્રોજન, ૫૦ કિગ્રા ફોસ્ફરસ અને ફૂલ વખતે ૫૦૦ કિગ્રા જીપ્સમ આપવું.",
-      "hi": "प्रति हेक्टेयर 25 किग्रा एन, 50 किग्रा पी और फूल आने पर 500 किग्रा जिप्सम दें।"
-    },
-    "waterTiming": {
-      "en": "Critical irrigation stages: Flowering, Pegging (30-35 DAP), and Pod development (50-60 DAP).",
-      "gu": "મહત્વના પિયત તબક્કા: ફૂલ આવવા, સુયા બેસવા અને ડોડવા વિકાસ વખતે.",
-      "hi": "सिंचाई के मुख्य चरण: फूल आना, सुइयां बनना और फली विकास।"
-    },
-    "possibleDiseases": [
-      {
-        "en": "Tikka Leaf Spot & White Grub Insect",
-        "gu": "ટપકાનો રોગ (ટીક્કા) અને મુંડાની જીવાત",
-        "hi": "टिक्का पत्ती धब्बा और सफेद गिटार"
-      }
-    ],
-    "precautions": [
-      {
-        "en": "Apply Chlorpyrifos with sand for white grub control before sowing.",
-        "gu": "મુંડાના નિયંત્રણ માટે વાવણી સમયે ક્લોરપાયરીફોસ રેતીમાં ભેળવી આપવું.",
-        "hi": "सफेद गिटार नियंत्रण के लिए बुआई से पहले रेत के साथ क्लोरपायरीफॉस मिलाएं।"
-      }
-    ]
-  },
-  {
-    "districtCode": "MEH",
-    "cropCode": "cumin",
-    "season": "rabi",
-    "soilInformation": {
-      "en": "Sandy Loam & Light Alluvial Soil",
-      "gu": "રેતીયાળ ગોરાડુ અને હળવી કાંપની જમીન",
-      "hi": "बलुई दोમट और हल्की जलोढ़ मिट्टी"
-    },
-    "phLevel": 7.9,
-    "npkLevel": {
-      "nitrogen": "Low",
-      "phosphorus": "Medium",
-      "potassium": "Medium"
-    },
-    "weatherInformation": {
-      "en": "Cool & Dry Winter Weather",
-      "gu": "ઠંડુ અને શુષ્ક શિયાળુ હવામાન",
-      "hi": "ठंडा और शुष्क शीतकालीन मौसम"
-    },
-    "fertilizerSuggestion": {
-      "en": "Apply 30 kg N and 15 kg P2O5 per hectare. Apply Nitrogen in 2 equal split doses.",
-      "gu": "હેક્ટર દીઠ ૩૦ કિગ્રા નાઇટ્રોજન અને ૧૫ કિગ્રા ફોસ્ફરસ ૨ સરખા હપ્તામાં આપવો.",
-      "hi": "प्रति हेक्टेयर 30 किग्रा एन और 15 किग्रा पी 2 समान खुराकों में दें।"
-    },
-    "waterTiming": {
-      "en": "First irrigation immediately after sowing, second at 8-10 days, and light irrigations during flowering.",
-      "gu": "પ્રથમ પિયત વાવણી પછી તુરંત, બીજું ૮-૧૦ દિવસે અને ફૂલ વખતે હળવા પિયત આપવા.",
-      "hi": "पहला सिंचाई बुआई के तुरंत बाद, दूसरा 8-10 दिनों पर और फूल आने पर हल्की सिंचाई करें।"
-    },
-    "possibleDiseases": [
-      {
-        "en": "Cumin Blight (Alternaria burnsii) & Powdery Mildew",
-        "gu": "જીરુંનો કાળીયો / સુકારો અને છારીયો રોગ",
-        "hi": "जीरा का झुलसा रोग और चूर्णी फफूंद"
-      }
-    ],
-    "precautions": [
-      {
-        "en": "Spray Mancozeb 75% WP (25g/10L) immediately at cloudiness to prevent blight.",
-        "gu": "વાદળછાયા હવામાનમાં કાળીયો રોગ અટકાવવા મેન્કોઝેબનો છંટકાવ કરવો.",
-        "hi": "झुलसा रोग से बचाव के लिए बादल होने पर तुरंत मैनकोजेब का छिड़काव करें।"
-      }
-    ]
-  }
-]
+    {
+      "code": "GJ-02",
+      "name": "Banaskantha",
+      "gujaratiName": "બનાસકાંઠા",
+      "hindiName": "बनासकांठा",
+      "region": "North Gujarat",
+      "crops": [
+        {
+          "id": "potato",
+          "name": "Potato",
+          "gujaratiName": "બટાટા",
+          "hindiName": "आलू",
+          "category": "Vegetable",
+          "seasons": [
+            {
+              "name": "Rabi",
+              "soil": {
+                "types": ["Sandy loam", "Well-drained loamy soil"],
+                "phRange": "5.5 - 6.5",
+                "nitrogen": { "recommendedRange": "Medium to High" },
+                "phosphorus": { "recommendedRange": "High" },
+                "potassium": { "recommendedRange": "High" }
+              },
+              "weatherRequirements": {
+                "temperature": "15°C - 25°C",
+                "rainfall": "Low; fully irrigated crop",
+                "humidity": "Low to Moderate"
+              },
+              "fertilizer": {
+                "recommendation": "High Potash and Phosphorus requirement for tuber development",
+                "applicationTiming": ["Basal dose at planting", "Top dressing at earthing-up stage"]
+              },
+              "irrigation": {
+                "requirement": "High; frequent light irrigation required",
+                "timing": "Light, frequent irrigation is important at tuber initiation.",
+                "frequency": "Every 7-10 days",
+                "criticalStages": ["Tuber initiation", "Tuber bulking"]
+              },
+              "diseases": [
+                {
+                  "name": "Late Blight",
+                  "gujaratiName": "લેટ બ્લાઇટ",
+                  "symptoms": "Water-soaked lesions on leaves turning black",
+                  "prevention": "Use resistant varieties, ensure field drainage"
+                }
+              ],
+              "pests": [
+                {
+                  "name": "Potato Tuber Moth",
+                  "gujaratiName": "બટાટા કંદ ફૂદડી",
+                  "symptoms": "Tunneling in tubers and leaves",
+                  "prevention": "Proper earthing up to cover tubers"
+                }
+              ],
+              "precautions": [
+                "Use certified disease-free seed tubers",
+                "Ensure proper earthing up",
+                "Monitor for late blight during humid spells"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
