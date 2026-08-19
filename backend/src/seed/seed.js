@@ -145,7 +145,7 @@ export const runSeed = async () => {
       {
         district: districtMapByCode['AND'] || insertedDistricts[0]._id,
         market: { en: 'Anand APMC Main Yard', gu: 'આણંદ એપીએમસી મુખ્ય યાર્ડ', hi: 'आनंद एपीएमसी मुख्य यार्ड' },
-        commodity: { en: 'Cotton (Kapass)', gu: 'કપાસ', hi: 'कपास' },
+        commodity: { en: 'Cotton (Kapass)', gu: 'કપાસ', hi: 'કપાસ' },
         variety: 'Shankar-6',
         minimumPrice: 6800,
         maximumPrice: 7650,
@@ -174,7 +174,7 @@ export const runSeed = async () => {
       },
       {
         district: districtMapByCode['UNJ'] || districtMapByCode['MEH'] || insertedDistricts[0]._id,
-        market: { en: 'Unjha APMC Spice Market', gu: 'ઊંઝા એપીએમસી મસાલા માર્કેટ', hi: 'ऊँઝા એપીએમસી મસાલા માર્કેટ' },
+        market: { en: 'Unjha APMC Spice Market', gu: 'ઊંઝા એપીએમસી મસાલા માર્કેટ', hi: 'ऊँझा एपीएमसी मसाला मंडी' },
         commodity: { en: 'Cumin (Jeera)', gu: 'જીરું', hi: 'જીરું' },
         variety: 'Quality No. 1',
         minimumPrice: 21500,
@@ -218,12 +218,20 @@ export const runSeed = async () => {
           };
         });
       } else if (parsedData.districts && Array.isArray(parsedData.districts)) {
+        // Safe helper function for multilingual District Name
+        const getDistrictNameStr = (distDoc) => {
+          if (!distDoc || !distDoc.districtName) return '';
+          if (typeof distDoc.districtName === 'string') return distDoc.districtName.toLowerCase();
+          return (distDoc.districtName.en || distDoc.districtName.gu || distDoc.districtName.hi || '').toLowerCase();
+        };
+
         // Flatten nested format: districts -> crops -> seasons
         parsedData.districts.forEach((d) => {
           const dCode = d.code ? d.code.replace('GJ-', '').toUpperCase() : '';
-          const matchedDistrictId = insertedDistricts.find(
-            (dist) => dist.districtCode === dCode || dist.districtName.toLowerCase().includes(d.name.toLowerCase())
-          )?._id || insertedDistricts[0]._id;
+          const matchedDistrictId = insertedDistricts.find((dist) => {
+            const dNameStr = getDistrictNameStr(dist);
+            return dist.districtCode === dCode || (dNameStr && d.name && dNameStr.includes(d.name.toLowerCase()));
+          })?._id || insertedDistricts[0]._id;
 
           (d.crops || []).forEach((c) => {
             const matchedCropId = insertedCrops.find(
