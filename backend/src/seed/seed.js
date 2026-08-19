@@ -22,11 +22,35 @@ import { soilTemplatesByRegion } from './soilData.js';
 import { schemesData } from './schemes.js';
 
 export const runSeed = async () => {
-  try {
-    logger.info('Connecting to MongoDB for database seeding...');
-    await mongoose.connect(env.mongoUri);
-    logger.info('Connected to MongoDB successfully.');
+  let connected = false;
+  const primaryUri = env.mongoUri;
+  const fallbackLocalUri = 'mongodb://127.0.0.1:27017/krishiseva';
 
+  try {
+    logger.info(`Attempting MongoDB Atlas connection: ${primaryUri.split('@')[1] || 'Cluster'}...`);
+    await mongoose.connect(primaryUri, { serverSelectionTimeoutMS: 5000 });
+    connected = true;
+    logger.info('Connected to MongoDB Atlas successfully!');
+  } catch (atlasErr) {
+    logger.warn(`MongoDB Atlas connection failed (${atlasErr.message}). Trying local MongoDB fallback...`);
+    try {
+      await mongoose.connect(fallbackLocalUri, { serverSelectionTimeoutMS: 3000 });
+      connected = true;
+      logger.info('Connected to Local MongoDB fallback successfully!');
+    } catch (localErr) {
+      logger.error('--------------------------------------------------------------------------------');
+      logger.error('CRITICAL DATABASE CONNECTION ERROR:');
+      logger.error('1. MongoDB Atlas IP Whitelist Issue: Your current IP address is not whitelisted on MongoDB Atlas.');
+      logger.error('   Fix: Go to MongoDB Atlas -> Network Access -> Add IP Address -> Click "Allow Access From Anywhere" (0.0.0.0/0).');
+      logger.error('2. Local MongoDB Server Not Running.');
+      logger.error('--------------------------------------------------------------------------------');
+      process.exit(1);
+    }
+  }
+
+  if (!connected) return;
+
+  try {
     // Drop database to clear old schema indexes
     logger.info('Dropping existing database collections and indexes...');
     await mongoose.connection.db.dropDatabase();
@@ -150,8 +174,8 @@ export const runSeed = async () => {
       },
       {
         district: districtMapByCode['UNJ'] || districtMapByCode['MEH'] || insertedDistricts[0]._id,
-        market: { en: 'Unjha APMC Spice Market', gu: 'ઊંઝા એપીએમસી મસાલા માર્કેટ', hi: 'ऊँझा एपीएमसी मसाला मंडी' },
-        commodity: { en: 'Cumin (Jeera)', gu: 'જીરું', hi: 'जीरा' },
+        market: { en: 'Unjha APMC Spice Market', gu: 'ઊંઝા એપીએમસી મસાલા માર્કેટ', hi: 'ऊँઝા એપીએમસી મસાલા માર્કેટ' },
+        commodity: { en: 'Cumin (Jeera)', gu: 'જીરું', hi: 'જીરું' },
         variety: 'Quality No. 1',
         minimumPrice: 21500,
         maximumPrice: 27800,
@@ -255,7 +279,7 @@ export const runSeed = async () => {
 
       if (smartKrishiItems.length > 0) {
         const insertedSmartKrishi = await SmartKrishi.insertMany(smartKrishiItems);
-        logger.info(`Seeded ${insertedSmartKrishi.length} Smart Krishi JSON advisory profiles into MongoDB Atlas.`);
+        logger.info(`Seeded ${insertedSmartKrishi.length} Smart Krishi JSON advisory profiles into Database.`);
       }
     } else {
       logger.warn('smartKrishiData.json not found, skipping JSON seed step.');
