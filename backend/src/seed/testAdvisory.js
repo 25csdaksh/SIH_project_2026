@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import dns from 'dns';
 import { env } from '../config/env.js';
+import { smartKrishiService } from '../services/smartKrishiService.js';
 import { SmartKrishi } from '../models/SmartKrishi.js';
 
 try {
@@ -16,27 +17,44 @@ const runTests = async () => {
     await mongoose.connect(fallbackLocalUri, { serverSelectionTimeoutMS: 3000 });
   }
 
-  console.log('\n--- TESTING SMART KRISHI DATABASE RECORDS ---\n');
+  console.log('\n====================================================');
+  console.log('RUNNING SMART KRISHI ADVISORY INTEGRATION TESTS');
+  console.log('====================================================\n');
 
-  const sampleRecords = await SmartKrishi.find({}).limit(4);
+  const testCases = [
+    { districtId: 'RAJ', cropId: 'groundnut', season: 'kharif', title: 'Rajkot → Groundnut → Kharif' },
+    { districtId: 'RAJ', cropId: 'groundnut', season: 'summer', title: 'Rajkot → Groundnut → Summer' },
+    { districtId: 'RAJ', cropId: 'cotton', season: 'kharif', title: 'Rajkot → Cotton → Kharif' }
+  ];
 
-  console.log(`Fetched ${sampleRecords.length} records from MongoDB SmartKrishi collection.\n`);
+  for (const tc of testCases) {
+    try {
+      const advisory = await smartKrishiService.generateAdvisory({
+        districtId: tc.districtId,
+        cropId: tc.cropId,
+        season: tc.season,
+        language: 'en'
+      });
 
-  for (const doc of sampleRecords) {
-    console.log(`DistrictCode: ${doc.districtCode}`);
-    console.log(`CropId: ${doc.cropId}`);
-    console.log(`Season: ${doc.season}`);
-    console.log(`DistrictName:`, doc.districtName);
-    console.log(`CropName:`, doc.cropName);
-    console.log(`Precautions (Multilingual Objects):`, doc.precautions.slice(0, 2));
-    console.log(`Soil:`, doc.soil?.types);
-    console.log(`Diseases:`, doc.diseases.slice(0, 1));
-    console.log('-----------------------------------------------------\n');
+      console.log(`✅ TEST: ${tc.title}`);
+      console.log(`   - District: ${advisory.district}`);
+      console.log(`   - Crop: ${advisory.crop}`);
+      console.log(`   - Season: ${advisory.season}`);
+      console.log(`   - Soil: ${advisory.soilInformation}`);
+      console.log(`   - pH: ${advisory.phLevel}`);
+      console.log(`   - Weather: ${advisory.weatherInformation}`);
+      console.log(`   - Fertilizer: ${advisory.fertilizerSuggestion.substring(0, 70)}...`);
+      console.log(`   - Water Timing: ${advisory.waterTiming.substring(0, 70)}...`);
+      console.log(`   - Diseases: ${advisory.possibleDiseases ? advisory.possibleDiseases[0] : 'None'}`);
+      console.log(`   - Precautions: ${advisory.precautions ? advisory.precautions[0] : 'None'}`);
+      console.log('----------------------------------------------------\n');
+    } catch (err) {
+      console.error(`❌ TEST FAILED: ${tc.title} - ${err.message}\n`);
+    }
   }
 
-  const total = await SmartKrishi.countDocuments({});
-  console.log(`Total SmartKrishi documents in MongoDB: ${total}\n`);
-
+  const finalDocs = await SmartKrishi.countDocuments({});
+  console.log(`Final SmartKrishi documents in MongoDB: ${finalDocs}\n`);
   process.exit(0);
 };
 
