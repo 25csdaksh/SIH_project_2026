@@ -20,7 +20,7 @@ export const getDistricts = async (req, res, next) => {
 
     if (!districts || districts.length === 0) {
       // Fallback to seeded districtsData
-      const formattedFallback = districtsData.map((d, index) => ({
+      const formattedFallback = districtsData.map((d) => ({
         _id: `dist_${d.districtCode.toLowerCase()}`,
         districtCode: d.districtCode,
         districtName: getLocalizedField(d.districtName, lang),
@@ -120,23 +120,31 @@ export const getDistrictCrops = async (req, res, next) => {
       } else {
         districtDoc = await District.findOne({ districtCode: districtId.toUpperCase() });
       }
+
       if (districtDoc) {
-        crops = await Crop.find({ suitableDistricts: districtDoc._id });
+        crops = await Crop.find({
+          $or: [
+            { suitableDistricts: districtDoc._id },
+            { suitableDistrictCodes: districtDoc.districtCode },
+            { suitableDistrictCodes: districtDoc.districtCode?.toUpperCase() }
+          ]
+        });
       }
     } catch (err) {
       districtDoc = null;
     }
 
+    // Fallback if DB query returned no crops
     if (!districtDoc || crops.length === 0) {
-      const distCode = districtId.replace('dist_', '').toUpperCase();
-      const match = districtsData.find((d) => d.districtCode.toUpperCase() === distCode);
-      if (!match) {
-        return errorResponse(res, 'District not found', null, 404);
-      }
-      districtDoc = match;
+      const codeToSearch = districtDoc?.districtCode || districtId.replace('dist_', '').toUpperCase();
+      const match = districtsData.find(
+        (d) => d.districtCode.toUpperCase() === codeToSearch.toUpperCase()
+      ) || districtsData[0];
 
-      // Filter cropsData suitable for this district code
-      crops = cropsData.filter((c) => (c.suitableDistrictCodes || []).includes(distCode));
+      districtDoc = districtDoc || match;
+
+      const fallbackCode = match.districtCode;
+      crops = cropsData.filter((c) => (c.suitableDistrictCodes || []).includes(fallbackCode));
     }
 
     const formattedCrops = crops.map((c) => ({
@@ -144,7 +152,7 @@ export const getDistrictCrops = async (req, res, next) => {
       cropCode: c.cropCode,
       name: getLocalizedField(c.name, lang),
       category: c.category,
-      availableSeasons: c.seasons.map((s) => ({
+      availableSeasons: (c.seasons || []).map((s) => ({
         seasonCode: s.seasonCode,
         name: getLocalizedField(s.name, lang),
         idealMonths: getLocalizedField(s.idealMonths, lang)
