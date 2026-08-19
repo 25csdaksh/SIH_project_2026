@@ -1,0 +1,30 @@
+:root {
+  /* Brand Colors - Earthy Agricultural Green Palette */
+  --primary-50: #f2f8f3;
+  --primary-100: #e1efe3;
+  --primary-200: #c2dfc7;
+  --primary-500: #2e7d32;
+  --primary-600: #256628;
+  --primary-700: #1b4d1e;
+  --primary-800: #123514;
+  
+  --accent-gold: #e65100;
+  --accent-yellow: #f57f17;
+  --accent-blue: #0288d1;
+  --accent-teal: #00796b;
+
+  --font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  --border-radius-sm: 6px;
+  --border-radius-md: 10px;
+  --border-radius-lg: 16px;
+  --border-radius-xl: 24px;
+
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.25s ease;
+  --transition-slow: 0.4s ease;
+
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+  --shadow-lg: 0 10px 25px rgba(0,0,0,0.12);
+}

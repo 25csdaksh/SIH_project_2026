@@ -1,0 +1,187 @@
+.soil-page-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.soil-header {
+  margin-bottom: 8px;
+}
+.soil-header h1 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--primary-500);
+}
+.soil-header p {
+  color: var(--text-muted);
+}
+.soil-content-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+@media (max-width: 1024px) {
+  .soil-content-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Map Card */
+.gujarat-map-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-lg);
+  padding: 24px;
+  box-shadow: var(--card-shadow);
+}
+.map-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--primary-500);
+  margin-bottom: 8px;
+}
+.map-instruction {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: 20px;
+}
+.districts-interactive-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 10px;
+}
+.district-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 10px 12px;
+  background-color: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-align: left;
+}
+.district-chip:hover {
+  background-color: var(--bg-hover);
+  border-color: var(--primary-500);
+}
+.district-chip.selected {
+  background-color: var(--primary-500);
+  color: #ffffff;
+  border-color: var(--primary-600);
+}
+.district-chip.selected .district-chip-code {
+  color: rgba(255,255,255,0.8);
+}
+.district-chip-code {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--text-light);
+}
+.district-chip-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+/* District Panel */
+.district-detail-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.panel-badge-row {
+  display: flex;
+  gap: 8px;
+}
+.district-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+.soil-metrics-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+.metric-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.metric-icon-wrap {
+  padding: 12px;
+  background-color: var(--bg-input);
+  border-radius: var(--border-radius-md);
+}
+.metric-label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  display: block;
+}
+.metric-val {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+.pill-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  list-style: none;
+  margin-top: 4px;
+}
+.source-pill {
+  background-color: var(--bg-hover);
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+}
+.section-card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.crops-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.crop-badge-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  background-color: var(--bg-input);
+  border-radius: var(--border-radius-md);
+}
+.crop-name {
+  font-weight: 600;
+}
+.season-tag {
+  font-size: 0.75rem;
+  background-color: var(--primary-50);
+  color: var(--primary-500);
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 500;
+}
+[data-theme="dark"] .season-tag {
+  background-color: rgba(46, 125, 50, 0.2);
+  color: #81c784;
+}
+.apmc-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.apmc-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+  padding: 8px 12px;
+  background-color: var(--bg-input);
+  border-radius: var(--border-radius-sm);
+}

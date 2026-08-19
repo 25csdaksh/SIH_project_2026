@@ -1,0 +1,103 @@
+.pest-page-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 900px;
+  margin: 0 auto;
+  width: 100%;
+}
+.uploader-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-lg);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-shadow: var(--card-shadow);
+}
+.upload-dropzone {
+  border: 2px dashed var(--primary-500);
+  border-radius: var(--border-radius-md);
+  padding: 40px 20px;
+  text-align: center;
+  background-color: var(--bg-input);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+.upload-dropzone:hover {
+  background-color: var(--bg-hover);
+}
+.dropzone-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.upload-icon {
+  color: var(--primary-500);
+}
+.file-hint {
+  font-size: 0.8rem;
+  color: var(--text-light);
+}
+.preview-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.image-preview {
+  max-height: 220px;
+  border-radius: var(--border-radius-md);
+  object-fit: cover;
+}
+.full-btn {
+  width: 100%;
+}
+.detection-result-card {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.result-header {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+.disease-name-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 4px 0;
+}
+.confidence-tag {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--primary-500);
+}
+.disease-desc {
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+.treatment-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+@media (max-width: 768px) {
+  .treatment-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.treatment-block {
+  background-color: var(--bg-input);
+  padding: 16px;
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--border-color);
+}
+.treatment-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}

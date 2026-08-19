@@ -1,0 +1,114 @@
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+.dashboard-welcome-banner {
+  background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-700) 100%);
+  color: #ffffff;
+  padding: 32px;
+  border-radius: var(--border-radius-xl);
+  box-shadow: var(--shadow-md);
+}
+.banner-title {
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+.banner-subtitle {
+  font-size: 1rem;
+  opacity: 0.9;
+}
+.quick-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+@media (max-width: 1024px) {
+  .quick-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 480px) {
+  .quick-stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.quick-stat-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px;
+}
+.stat-card-icon {
+  padding: 10px;
+  border-radius: var(--border-radius-md);
+}
+.stat-card-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  display: block;
+}
+.stat-card-val {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+@media (max-width: 1024px) {
+  .features-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 768px) {
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.feature-nav-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: 100%;
+}
+.feature-nav-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--primary-500);
+}
+.feature-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.feature-icon-badge {
+  padding: 12px;
+  border-radius: var(--border-radius-md);
+}
+.feature-arrow {
+  color: var(--text-light);
+  transition: transform var(--transition-fast);
+}
+.feature-nav-card:hover .feature-arrow {
+  transform: translateX(4px);
+  color: var(--primary-500);
+}
+.feature-card-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+.feature-card-desc {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+.feature-card-link-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}

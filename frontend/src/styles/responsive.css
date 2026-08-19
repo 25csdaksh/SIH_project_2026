@@ -1,0 +1,26 @@
+/* Responsive Layout Rules */
+@media (max-width: 1024px) {
+  .dashboard-layout {
+    grid-template-columns: 1fr !important;
+  }
+  .sidebar-container {
+    position: fixed;
+    top: 0;
+    left: -280px;
+    height: 100vh;
+    z-index: 1000;
+    transition: left var(--transition-normal);
+  }
+  .sidebar-container.open {
+    left: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .grid-2, .grid-3, .grid-4 {
+    grid-template-columns: 1fr !important;
+  }
+  .navbar-actions {
+    gap: 8px !important;
+  }
+}
