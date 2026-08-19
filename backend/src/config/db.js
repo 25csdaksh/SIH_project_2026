@@ -1,6 +1,14 @@
 import mongoose from 'mongoose';
+import dns from 'dns';
 import { env } from './env.js';
 import { logger } from '../utils/logger.js';
+
+// Configure Public DNS for MongoDB Atlas SRV lookup on Windows
+try {
+  dns.setServers(['8.8.8.8', '8.8.4.4']);
+} catch (e) {
+  // Ignore DNS override errors
+}
 
 export const connectDB = async () => {
   try {

@@ -1,6 +1,11 @@
 import mongoose from 'mongoose';
+import dns from 'dns';
 import { env } from '../config/env.js';
 import { logger } from '../utils/logger.js';
+
+try {
+  dns.setServers(['8.8.8.8', '8.8.4.4']);
+} catch (e) {}
 import { District } from '../models/District.js';
 import { Crop } from '../models/Crop.js';
 import { Soil } from '../models/Soil.js';
