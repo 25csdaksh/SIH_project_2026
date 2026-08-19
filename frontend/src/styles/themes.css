@@ -1,0 +1,39 @@
+/* Light Theme Default */
+:root, [data-theme="light"] {
+  --bg-app: #f7faf8;
+  --bg-card: #ffffff;
+  --bg-sidebar: #ffffff;
+  --bg-navbar: #ffffff;
+  --bg-input: #f4f6f5;
+  --bg-hover: #edf4ee;
+  
+  --text-main: #1c281e;
+  --text-muted: #5e6d61;
+  --text-light: #8b998d;
+  
+  --border-color: #e2e8e3;
+  --divider-color: #edf1ed;
+  
+  --card-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+  --navbar-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+}
+
+/* Dark Theme Overrides */
+[data-theme="dark"] {
+  --bg-app: #0f1711;
+  --bg-card: #17231a;
+  --bg-sidebar: #131d16;
+  --bg-navbar: #17231a;
+  --bg-input: #1f2e22;
+  --bg-hover: #223526;
+  
+  --text-main: #e8f2e9;
+  --text-muted: #a3b8a6;
+  --text-light: #708673;
+  
+  --border-color: #27382a;
+  --divider-color: #1e2c20;
+  
+  --card-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+  --navbar-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+}
