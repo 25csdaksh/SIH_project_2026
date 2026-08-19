@@ -155,7 +155,7 @@ export const runSeed = async () => {
       {
         district: districtMapByCode['AND'] || insertedDistricts[0]._id,
         market: { en: 'Anand APMC Main Yard', gu: 'આણંદ એપીએમસી મુખ્ય યાર્ડ', hi: 'आनंद एपीएमसी मुख्य यार्ड' },
-        commodity: { en: 'Paddy (Dangar)', gu: 'ડાંગર', hi: 'धान' },
+        commodity: { en: 'Paddy (Dangar)', gu: 'ડાંગર', hi: 'ધાન' },
         variety: 'Gujarat-17',
         minimumPrice: 2100,
         maximumPrice: 2480,
@@ -174,7 +174,7 @@ export const runSeed = async () => {
       },
       {
         district: districtMapByCode['UNJ'] || districtMapByCode['MEH'] || insertedDistricts[0]._id,
-        market: { en: 'Unjha APMC Spice Market', gu: 'ઊંઝા એપીએમસી મસાલા માર્કેટ', hi: 'ऊँझा एपीएमसी मसाला मंडी' },
+        market: { en: 'Unjha APMC Spice Market', gu: 'ઊંઝા એપીએમસી મસાલા માર્કેટ', hi: 'ऊँઝા એપીએમસી મસાલા માર્કેટ' },
         commodity: { en: 'Cumin (Jeera)', gu: 'જીરું', hi: 'જીરું' },
         variety: 'Quality No. 1',
         minimumPrice: 21500,
@@ -225,6 +225,13 @@ export const runSeed = async () => {
           return (distDoc.districtName.en || distDoc.districtName.gu || distDoc.districtName.hi || '').toLowerCase();
         };
 
+        // Safe helper function for multilingual Crop Name
+        const getCropNameStr = (cropDoc) => {
+          if (!cropDoc || !cropDoc.name) return '';
+          if (typeof cropDoc.name === 'string') return cropDoc.name.toLowerCase();
+          return (cropDoc.name.en || cropDoc.name.gu || cropDoc.name.hi || '').toLowerCase();
+        };
+
         // Flatten nested format: districts -> crops -> seasons
         parsedData.districts.forEach((d) => {
           const dCode = d.code ? d.code.replace('GJ-', '').toUpperCase() : '';
@@ -234,9 +241,10 @@ export const runSeed = async () => {
           })?._id || insertedDistricts[0]._id;
 
           (d.crops || []).forEach((c) => {
-            const matchedCropId = insertedCrops.find(
-              (cr) => cr.cropCode === c.id || cr.name.toLowerCase() === c.name.toLowerCase()
-            )?._id || insertedCrops[0]._id;
+            const matchedCropId = insertedCrops.find((cr) => {
+              const crNameStr = getCropNameStr(cr);
+              return cr.cropCode === c.id || (crNameStr && c.name && crNameStr.includes(c.name.toLowerCase()));
+            })?._id || insertedCrops[0]._id;
 
             (c.seasons || []).forEach((s) => {
               smartKrishiItems.push({
