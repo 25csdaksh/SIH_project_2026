@@ -1,16 +1,20 @@
 import mongoose from 'mongoose';
 import dns from 'dns';
+import fs from 'fs';
+import path from 'path';
 import { env } from '../config/env.js';
 import { logger } from '../utils/logger.js';
 
 try {
   dns.setServers(['8.8.8.8', '8.8.4.4']);
 } catch (e) {}
+
 import { District } from '../models/District.js';
 import { Crop } from '../models/Crop.js';
 import { Soil } from '../models/Soil.js';
 import { GovernmentScheme } from '../models/GovernmentScheme.js';
 import { MandiRate } from '../models/MandiRate.js';
+import { SmartKrishi } from '../models/SmartKrishi.js';
 
 import { districtsData } from './districts.js';
 import { cropsData } from './crops.js';
@@ -158,6 +162,40 @@ export const runSeed = async () => {
 
     const insertedMandi = await MandiRate.insertMany(sampleMandiRates);
     logger.info(`Seeded ${insertedMandi.length} sample Mandi Rate records.`);
+
+    // 6. Seed Smart Krishi JSON Data
+    logger.info('Clearing old SmartKrishi records & reading smartKrishiData.json...');
+    await SmartKrishi.deleteMany({});
+
+    const jsonPath = path.resolve('src/seed/smartKrishiData.json');
+    if (fs.existsSync(jsonPath)) {
+      const rawJson = fs.readFileSync(jsonPath, 'utf8');
+      const smartKrishiItems = JSON.parse(rawJson);
+
+      const smartKrishiDocs = smartKrishiItems.map((item) => {
+        const dId = districtMapByCode[item.districtCode] || insertedDistricts[0]._id;
+        const cId = cropMapByCode[item.cropCode] || insertedCrops[0]._id;
+
+        return {
+          district: dId,
+          crop: cId,
+          season: item.season,
+          soilInformation: item.soilInformation,
+          phLevel: item.phLevel,
+          npkLevel: item.npkLevel,
+          weatherInformation: item.weatherInformation,
+          fertilizerSuggestion: item.fertilizerSuggestion,
+          waterTiming: item.waterTiming,
+          possibleDiseases: item.possibleDiseases,
+          precautions: item.precautions
+        };
+      });
+
+      const insertedSmartKrishi = await SmartKrishi.insertMany(smartKrishiDocs);
+      logger.info(`Seeded ${insertedSmartKrishi.length} Smart Krishi JSON advisory profiles into MongoDB Atlas.`);
+    } else {
+      logger.warn('smartKrishiData.json not found, skipping JSON seed step.');
+    }
 
     logger.info('Database seeding completed successfully!');
     process.exit(0);
